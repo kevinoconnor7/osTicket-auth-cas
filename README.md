@@ -3,6 +3,14 @@ JASIG CAS Authentication for osTicket
 
 Provides CAS authentication for agents and/or clients on osTicket.
 
+Features
+========
+ - CAS extended attributes for user name and e-mail addresses.
+ - Optionally appending a suffix to user names to allow mapping to e-mail addresses.
+ - Login for both agents and clients (can be toggled for neither, either, or both).
+ - Certificate validation (can be disabled for testing).
+ - Auto creates clients if not already in osTicket.
+
 Installing
 ==========
 
@@ -10,7 +18,7 @@ Installing
 
 Download the auth-cas.phar from the [latest release](https://github.com/kevinoconnor7/osTicket-auth-cas/releases/latest)
 and put it in your `includes/plugins` folder. From the admin panel go to
-**Manage** --> **Plugins** --> **Add New Plugin** and select the plugin.
+*Manage* --> *Plugins* --> *Add New Plugin* and select the plugin.
 
 ### From source
 
