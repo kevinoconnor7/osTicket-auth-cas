@@ -18,11 +18,18 @@ class CasAuth {
           intval($this->config->get('cas-port')),
           $this->config->get('cas-context')
         );
+
+        // Force set the CAS service URL to the osTicket login page.
+        phpCAS::setFixedServiceURL($this->config['service_url']);
+
+        // Verify the CAS server's certificate, if configured.
         if($this->config->get('cas-ca-cert-path')) {
             phpCAS::setCasServerCACert($this->config->get('cas-ca-cert-path'));
         } else {
             phpCAS::setNoCasServerValidation();
         }
+
+        // Trigger authentication and set the user fields when validated.
         if(!phpCAS::isAuthenticated()) {
             phpCAS::forceAuthentication();
         } else {
@@ -90,6 +97,7 @@ class CasStaffAuthBackend extends ExternalStaffAuthenticationBackend {
 
     function __construct($config) {
         $this->config = $config;
+        $this->config['service_url'] = ROOT_PATH . 'scp/';
         $this->cas = new CasAuth($config);
     }
 
@@ -119,7 +127,7 @@ class CasStaffAuthBackend extends ExternalStaffAuthenticationBackend {
     function triggerAuth() {
         parent::triggerAuth();
         $cas = $this->cas->triggerAuth();
-        Http::redirect(ROOT_PATH . 'scp/');
+        Http::redirect($this->config['service_url']);
     }
 }
 
@@ -131,6 +139,7 @@ class CasClientAuthBackend extends ExternalUserAuthenticationBackend {
 
     function __construct($config) {
         $this->config = $config;
+        $this->config['service_url'] = ROOT_PATH . 'login.php';
         $this->cas = new CasAuth($config);
     }
 
@@ -169,6 +178,6 @@ class CasClientAuthBackend extends ExternalUserAuthenticationBackend {
     function triggerAuth() {
         parent::triggerAuth();
         $cas = $this->cas->triggerAuth();
-        Http::redirect(ROOT_PATH . 'login.php');
+        Http::redirect($this->config['service_url']);
     }
 }
