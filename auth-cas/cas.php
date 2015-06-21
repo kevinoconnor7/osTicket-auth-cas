@@ -3,14 +3,13 @@
 require_once(dirname(__file__).'/lib/jasig/phpcas/CAS.php');
 
 class CasAuth {
-    var $config;
-    var $access_token;
+    private $config;
 
     function __construct($config) {
         $this->config = $config;
     }
 
-    function triggerAuth() {
+    function triggerAuth($service_url = false) {
         $self = $this;
         phpCAS::client(
           CAS_VERSION_2_0,
@@ -20,7 +19,9 @@ class CasAuth {
         );
 
         // Force set the CAS service URL to the osTicket login page.
-        phpCAS::setFixedServiceURL($this->config['service_url']);
+        if ($service_url) {
+          phpCAS::setFixedServiceURL($this->service_url);
+        }
 
         // Verify the CAS server's certificate, if configured.
         if($this->config->get('cas-ca-cert-path')) {
@@ -97,7 +98,6 @@ class CasStaffAuthBackend extends ExternalStaffAuthenticationBackend {
 
     function __construct($config) {
         $this->config = $config;
-        $this->config['service_url'] = ROOT_PATH . 'scp/';
         $this->cas = new CasAuth($config);
     }
 
@@ -123,11 +123,19 @@ class CasStaffAuthBackend extends ExternalStaffAuthenticationBackend {
         unset($_SESSION[':cas']);
     }
 
+    function getServiceUrl() {
+      global $cfg;
+
+      if (!$cfg) {
+        return null;
+      }
+      return $cfg->getUrl() . "scp/";
+    }
 
     function triggerAuth() {
         parent::triggerAuth();
-        $cas = $this->cas->triggerAuth();
-        Http::redirect($this->config['service_url']);
+        $cas = $this->cas->triggerAuth($this->getServiceUrl());
+        Http::redirect("scp/");
     }
 }
 
@@ -139,7 +147,6 @@ class CasClientAuthBackend extends ExternalUserAuthenticationBackend {
 
     function __construct($config) {
         $this->config = $config;
-        $this->config['service_url'] = ROOT_PATH . 'login.php';
         $this->cas = new CasAuth($config);
     }
 
@@ -175,9 +182,17 @@ class CasClientAuthBackend extends ExternalUserAuthenticationBackend {
         unset($_SESSION[':cas']);
     }
 
+    function getServiceUrl() {
+      global $cfg;
+      if (!$cfg) {
+        return null;
+      }
+      return $cfg->getUrl() . "login.php";
+    }
+
     function triggerAuth() {
         parent::triggerAuth();
-        $cas = $this->cas->triggerAuth();
-        Http::redirect($this->config['service_url']);
+        $cas = $this->cas->triggerAuth($this->getServiceUrl());
+        Http::redirect("login.php");
     }
 }
