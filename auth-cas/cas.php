@@ -20,7 +20,7 @@ class CasAuth {
 
         // Force set the CAS service URL to the osTicket login page.
         if ($service_url) {
-          phpCAS::setFixedServiceURL($this->service_url);
+          phpCAS::setFixedServiceURL($service_url);
         }
 
         // Verify the CAS server's certificate, if configured.
