@@ -6,7 +6,7 @@ return array(
     'author' =>         'Kevin O\'Connor',
     'description' =>    /* trans */ 'Provides a configurable authentication
         backend for authenticating staff and clients using CAS.',
-    'url' =>            'http://www.osticket.com/plugins/auth/cas',
+    'url' =>            'https://www.github.com/kevinoconnor7/osTicket-auth-cas',
     'plugin' =>         'authentication.php:CasAuthPlugin',
     'requires' => array(
         "jasig/phpcas" => array(
