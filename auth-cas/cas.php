@@ -49,15 +49,23 @@ class CasAuth {
     }
 
     function setEmail() {
-        if($this->config->get('cas-email-attribute-key') !== null
-            && phpCAS::hasAttribute($this->config->get('cas-email-attribute-key'))) {
-            $_SESSION[':cas']['email'] = phpCAS::getAttribute(
-              $this->config->get('cas-email-attribute-key'));
-        } else {
-            $email = $this->getUser();
-            if($this->config->get('cas-at-domain') !== null) {
-                $email .= $this->config->get('cas-at-domain');
-            }
+        $email = $this->getUser();
+        switch($this->config->get('attr-provider')) {
+            case "cas" :
+                if($this->config->get('email-attribute-key') !== null
+                   && phpCAS::hasAttribute($this->config->get('email-attribute-key'))) {
+                    $_SESSION[':cas']['email'] = phpCAS::getAttribute($this->config->get('email-attribute-key'));
+                    break;
+                }
+            case "http" :
+                if($this->config->get('email-attribute-key') !== null && $_SERVER['HTTP_'.$this->config->get('email-attribute-key')] !== null) {
+                    $_SESSION[':cas']['email'] = $_SERVER['HTTP_'.$this->config->get('email-attribute-key')];
+                    break;
+                }
+            case "none" :
+                if($this->config->get('cas-at-domain') !== null) {
+                    $email .= $this->config->get('cas-at-domain');
+                }
             $_SESSION[':cas']['email'] = $email;
         }
     }
@@ -67,11 +75,18 @@ class CasAuth {
     }
 
     function setName() {
-        if($this->config->get('cas-name-attribute-key') !== null
-            && phpCAS::hasAttribute($this->config->get('cas-name-attribute-key'))) {
-            $_SESSION[':cas']['name'] = phpCAS::getAttribute(
-              $this->config->get('cas-name-attribute-key'));
-        } else {
+        switch($this->config->get('attr-provider')) {
+            case "cas" :
+                if($this->config->get('name-attribute-key') !== null
+                   && phpCAS::hasAttribute($this->config->get('name-attribute-key'))) {
+                    $_SESSION[':cas']['name'] = phpCAS::getAttribute($this->config->get('name-attribute-key'));
+                    break;
+                }
+            case "http" :
+                if($this->config->get('name-attribute-key') !== null && $_SERVER['HTTP_'.$this->config->get('name-attribute-key')] !== null) {
+                    $_SESSION[':cas']['name'] = $_SERVER['HTTP_'.$this->config->get('name-attribute-key')];
+                    break;
+                }
             $_SESSION[':cas']['name'] = $this->getUser();
         }
     }
