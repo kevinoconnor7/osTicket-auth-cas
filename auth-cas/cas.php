@@ -9,7 +9,7 @@ class CasAuth {
         $this->config = $config;
     }
 
-    function triggerAuth($service_url = false) {
+    function triggerAuth($service_url = null) {
         $self = $this;
         phpCAS::client(
           CAS_VERSION_2_0,
@@ -37,6 +37,7 @@ class CasAuth {
             $this->setUser();
             $this->setEmail();
             $this->setName();
+            $this->setAgent();
         }
     }
 
@@ -49,15 +50,23 @@ class CasAuth {
     }
 
     function setEmail() {
-        if($this->config->get('cas-email-attribute-key') !== null
-            && phpCAS::hasAttribute($this->config->get('cas-email-attribute-key'))) {
-            $_SESSION[':cas']['email'] = phpCAS::getAttribute(
-              $this->config->get('cas-email-attribute-key'));
-        } else {
-            $email = $this->getUser();
-            if($this->config->get('cas-at-domain') !== null) {
-                $email .= $this->config->get('cas-at-domain');
-            }
+        $email = $this->getUser();
+        switch($this->config->get('attr-provider')) {
+            case "cas" :
+                if($this->config->get('email-attribute-key') !== null
+                   && phpCAS::hasAttribute($this->config->get('email-attribute-key'))) {
+                    $_SESSION[':cas']['email'] = phpCAS::getAttribute($this->config->get('email-attribute-key'));
+                    break;
+                }
+            case "http" :
+                if($this->config->get('email-attribute-key') !== null && $_SERVER['HTTP_'.strtoupper($this->config->get('email-attribute-key'))] !== null) {
+                    $_SESSION[':cas']['email'] = $_SERVER['HTTP_'.strtoupper($this->config->get('email-attribute-key'))];
+                    break;
+                }
+            case "none" :
+                if($this->config->get('cas-at-domain') !== null) {
+                    $email .= $this->config->get('cas-at-domain');
+                }
             $_SESSION[':cas']['email'] = $email;
         }
     }
@@ -67,11 +76,18 @@ class CasAuth {
     }
 
     function setName() {
-        if($this->config->get('cas-name-attribute-key') !== null
-            && phpCAS::hasAttribute($this->config->get('cas-name-attribute-key'))) {
-            $_SESSION[':cas']['name'] = phpCAS::getAttribute(
-              $this->config->get('cas-name-attribute-key'));
-        } else {
+        switch($this->config->get('attr-provider')) {
+            case "cas" :
+                if($this->config->get('name-attribute-key') !== null
+                   && phpCAS::hasAttribute($this->config->get('name-attribute-key'))) {
+                    $_SESSION[':cas']['name'] = phpCAS::getAttribute($this->config->get('name-attribute-key'));
+                    break;
+                }
+            case "http" :
+                if($this->config->get('name-attribute-key') !== null && $_SERVER['HTTP_'.strtoupper($this->config->get('name-attribute-key'))] !== null) {
+                    $_SESSION[':cas']['name'] = $_SERVER['HTTP_'.strtoupper($this->config->get('name-attribute-key'))];
+                    break;
+                }
             $_SESSION[':cas']['name'] = $this->getUser();
         }
     }
@@ -79,11 +95,32 @@ class CasAuth {
     function getName() {
         return $_SESSION[':cas']['name'];
     }
-
+    
+    function setAgent() {
+        switch($this->config->get('attr-provider')) {
+            case "cas" :
+                if($this->config->get('status-attribute-key') !== null
+                   && phpCAS::hasAttribute($this->config->get('status-attribute-key'))) {
+                    $_SESSION[':cas']['agent'] = phpCAS::getAttribute($this->config->get('status-attribute-key'))==$this->config->get('status-agent-value');
+                    break;
+                }
+            case "http" :
+                if($this->config->get('status-attribute-key') !== null && $_SERVER['HTTP_'.strtoupper($this->config->get('status-attribute-key'))] !== null) {
+                    $_SESSION[':cas']['agent'] = $_SERVER['HTTP_'.strtoupper($this->config->get('status-attribute-key'))]==$this->config->get('status-agent-value');;
+                    break;
+                }
+            $_SESSION[':cas']['agent'] = false ;
+        }
+    }
+    
+    function getAgent() {
+        return $_SESSION[':cas']['agent'];
+    }
     function getProfile() {
         return array(
             'email' => $this->getEmail(),
-            'name' => $this->getName()
+            'name' => $this->getName(),
+            'agent' => $this->getAgent()
         );
     }
 }
@@ -129,13 +166,13 @@ class CasStaffAuthBackend extends ExternalStaffAuthenticationBackend {
       if (!$cfg) {
         return null;
       }
-      return $cfg->getUrl() . "scp/";
+      return $cfg->getUrl() . "scp/login.php?do=ext&bk=cas";
     }
 
     function triggerAuth() {
         parent::triggerAuth();
         $cas = $this->cas->triggerAuth($this->getServiceUrl());
-        Http::redirect("scp/");
+        Http::redirect("login.php");
     }
 }
 
@@ -161,6 +198,11 @@ class CasClientAuthBackend extends ExternalUserAuthenticationBackend {
     }
 
     function signOn() {
+        // redirect agent to admin panel
+        if($_SESSION[':cas']['agent']) {
+            Http::redirect("scp/login.php");
+        }
+        
         if (isset($_SESSION[':cas']['user'])) {
             $acct = ClientAccount::lookupByUsername($this->cas->getEmail());
             $client = null;
@@ -187,7 +229,7 @@ class CasClientAuthBackend extends ExternalUserAuthenticationBackend {
       if (!$cfg) {
         return null;
       }
-      return $cfg->getUrl() . "login.php";
+      return $cfg->getUrl() . "login.php?do=ext&bk=cas.client";
     }
 
     function triggerAuth() {

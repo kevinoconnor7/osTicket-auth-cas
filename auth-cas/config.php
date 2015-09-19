@@ -49,21 +49,41 @@ class CasPluginConfig extends PluginConfig {
                 'label' => $__('CAS CA Cert Path'),
                 'configuration' => array('size'=>60, 'length'=>100),
             )),
+            'cas-enabled' => clone $modes,
+            'attr' => new SectionBreakField(array(
+                'label'=> $__('User Attributes'),
+            )),
+            'attr-provider' => new ChoiceField(array(
+                'label' => $__('Attributes Provider'),
+                'default' => 'none',
+                'choices' => array(
+                  'none' => $__('None'),
+                  'cas' => $__('CAS'),
+                  'http' => $__('HTTP'),
+                  ),
+            )),    
+            'name-attribute-key' => new TextboxField(array(
+                'label' => $__('Name attribute key'),
+                'configuration' => array('size'=>60, 'length'=>100),
+            )),
+            'email-attribute-key' => new TextboxField(array(
+                'label' => $__('Email attribute key'),
+                'configuration' => array('size'=>60, 'length'=>100),
+            )),
             'cas-at-domain' => new TextboxField(array(
                 'label' => $__('CAS e-mail suffix'),
                 'configuration' => array('size'=>60, 'length'=>100),
                 'hint' => $__('Use this field if your CAS server does not
                     report an e-mail attribute. ex: "@domain.tld"'),
             )),
-            'cas-name-attribute-key' => new TextboxField(array(
-                'label' => $__('CAS name attribute key'),
+            'status-attribute-key' => new TextboxField(array(
+                'label' => $__('Status attribute key'),
                 'configuration' => array('size'=>60, 'length'=>100),
             )),
-            'cas-email-attribute-key' => new TextboxField(array(
-                'label' => $__('CAS email attribute key'),
+             'status-agent-value' => new TextboxField(array(
+                'label' => $__('Agent Status value'),
                 'configuration' => array('size'=>60, 'length'=>100),
             )),
-            'cas-enabled' => clone $modes,
         );
     }
 }
