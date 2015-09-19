@@ -5,9 +5,10 @@ Provides CAS authentication for agents and/or clients on osTicket.
 
 Features
 ========
- - CAS extended attributes for user name and e-mail addresses.
+ - CAS or HTTP extended attributes for user name and e-mail addresses.
  - Optionally appending a suffix to user names to allow mapping to e-mail addresses.
  - Login for both agents and clients (can be toggled for neither, either, or both).
+ - Optionally redirect Agents to admin login through extended attributes for status.
  - Certificate validation (can be disabled for testing).
  - Auto creates clients if not already in osTicket.
 
