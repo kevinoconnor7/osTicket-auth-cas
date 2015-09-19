@@ -9,7 +9,7 @@ class CasAuth {
         $this->config = $config;
     }
 
-    function triggerAuth($service_url = false) {
+    function triggerAuth($service_url = null) {
         $self = $this;
         phpCAS::client(
           CAS_VERSION_2_0,
@@ -129,13 +129,13 @@ class CasStaffAuthBackend extends ExternalStaffAuthenticationBackend {
       if (!$cfg) {
         return null;
       }
-      return $cfg->getUrl() . "scp/";
+      return $cfg->getUrl() . "scp/login.php?do=ext&bk=cas";
     }
 
     function triggerAuth() {
         parent::triggerAuth();
         $cas = $this->cas->triggerAuth($this->getServiceUrl());
-        Http::redirect("scp/");
+        Http::redirect("login.php");
     }
 }
 
@@ -187,7 +187,7 @@ class CasClientAuthBackend extends ExternalUserAuthenticationBackend {
       if (!$cfg) {
         return null;
       }
-      return $cfg->getUrl() . "login.php";
+      return $cfg->getUrl() . "login.php?do=ext&bk=cas.client";
     }
 
     function triggerAuth() {
