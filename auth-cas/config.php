@@ -76,6 +76,14 @@ class CasPluginConfig extends PluginConfig {
                 'hint' => $__('Use this field if your CAS server does not
                     report an e-mail attribute. ex: "@domain.tld"'),
             )),
+            'status-attribute-key' => new TextboxField(array(
+                'label' => $__('Status attribute key'),
+                'configuration' => array('size'=>60, 'length'=>100),
+            )),
+             'status-agent-value' => new TextboxField(array(
+                'label' => $__('Agent Status value'),
+                'configuration' => array('size'=>60, 'length'=>100),
+            )),
         );
     }
 }
