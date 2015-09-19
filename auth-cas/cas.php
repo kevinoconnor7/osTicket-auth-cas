@@ -172,7 +172,7 @@ class CasStaffAuthBackend extends ExternalStaffAuthenticationBackend {
     function triggerAuth() {
         parent::triggerAuth();
         $cas = $this->cas->triggerAuth($this->getServiceUrl());
-        Http::redirect("scp/login.php");
+        Http::redirect("login.php");
     }
 }
 
