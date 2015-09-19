@@ -51,10 +51,10 @@ class CasPluginConfig extends PluginConfig {
             )),
             'cas-enabled' => clone $modes,
             'attr' => new SectionBreakField(array(
-                'label'=> $__('User Attributs'),
+                'label'=> $__('User Attributes'),
             )),
             'attr-provider' => new ChoiceField(array(
-                'label' => $__('Attribute Provider'),
+                'label' => $__('Attributes Provider'),
                 'default' => 'none',
                 'choices' => array(
                   'none' => $__('None'),
