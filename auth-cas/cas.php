@@ -1,5 +1,4 @@
 <?php
-
 require_once(dirname(__file__).'/lib/jasig/phpcas/CAS.php');
 
 class CasAuth {
@@ -9,13 +8,14 @@ class CasAuth {
         $this->config = $config;
     }
 
-    function triggerAuth($service_url = false) {
+    function triggerAuth($service_url = null) {
         $self = $this;
         phpCAS::client(
           CAS_VERSION_2_0,
           $this->config->get('cas-hostname'),
           intval($this->config->get('cas-port')),
-          $this->config->get('cas-context')
+          $this->config->get('cas-context'),
+          false
         );
 
         // Force set the CAS service URL to the osTicket login page.
@@ -109,8 +109,12 @@ class CasStaffAuthBackend extends ExternalStaffAuthenticationBackend {
 
     function signOn() {
         if (isset($_SESSION[':cas']['user'])) {
-            $staff = new StaffSession($this->cas->getEmail());
-            if ($staff && $staff->getId()) {
+            if (($staff = StaffSession::lookup($_SESSION[':cas']['email']))
+                && $staff->getId()) {
+                if (!$staff instanceof StaffSession) {
+                    // osTicket <= v1.9.7 or so
+                    $staff = new StaffSession($staff->getId());
+                }
                 return $staff;
             } else {
                 $_SESSION['_staff']['auth']['msg'] = 'Have your administrator create a local account';
@@ -129,13 +133,13 @@ class CasStaffAuthBackend extends ExternalStaffAuthenticationBackend {
       if (!$cfg) {
         return null;
       }
-      return $cfg->getUrl() . "scp/";
+      return $cfg->getUrl() . "api/auth/ext";
     }
 
     function triggerAuth() {
         parent::triggerAuth();
         $cas = $this->cas->triggerAuth($this->getServiceUrl());
-        Http::redirect("scp/");
+        Http::redirect(ROOT_PATH . "scp/");
     }
 }
 
@@ -187,12 +191,12 @@ class CasClientAuthBackend extends ExternalUserAuthenticationBackend {
       if (!$cfg) {
         return null;
       }
-      return $cfg->getUrl() . "login.php";
+      return $cfg->getUrl() . "api/auth/ext";
     }
 
     function triggerAuth() {
         parent::triggerAuth();
         $cas = $this->cas->triggerAuth($this->getServiceUrl());
-        Http::redirect("login.php");
+        Http::redirect(ROOT_PATH . "login.php");
     }
 }
