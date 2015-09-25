@@ -48,43 +48,40 @@ class CasAuth {
   }
 
   function setEmail() {
-    if($this->config->get('cas-email-attribute-key') !== null
-      && phpCAS::hasAttribute($this->config->get('cas-email-attribute-key'))) {
+    if($this->config->get('cas-email-attribute-key') !== null && phpCAS::hasAttribute($this->config->get('cas-email-attribute-key'))) {
       $_SESSION[':cas']['email'] = phpCAS::getAttribute(
         $this->config->get('cas-email-attribute-key'));
-  } else {
-    $email = $this->getUser();
-    if($this->config->get('cas-at-domain') !== null) {
-      $email .= $this->config->get('cas-at-domain');
+    } else {
+      $email = $this->getUser();
+      if($this->config->get('cas-at-domain') !== null) {
+        $email .= $this->config->get('cas-at-domain');
+      }
+      $_SESSION[':cas']['email'] = $email;
     }
-    $_SESSION[':cas']['email'] = $email;
   }
-}
 
-function getEmail() {
-  return $_SESSION[':cas']['email'];
-}
+  function getEmail() {
+    return $_SESSION[':cas']['email'];
+  }
 
-function setName() {
-  if($this->config->get('cas-name-attribute-key') !== null
-    && phpCAS::hasAttribute($this->config->get('cas-name-attribute-key'))) {
-    $_SESSION[':cas']['name'] = phpCAS::getAttribute(
-      $this->config->get('cas-name-attribute-key'));
-} else {
-  $_SESSION[':cas']['name'] = $this->getUser();
-}
-}
+  function setName() {
+    if($this->config->get('cas-name-attribute-key') !== null && phpCAS::hasAttribute($this->config->get('cas-name-attribute-key'))) {
+      $_SESSION[':cas']['name'] = phpCAS::getAttribute(
+        $this->config->get('cas-name-attribute-key'));
+    } else {
+      $_SESSION[':cas']['name'] = $this->getUser();
+    }
+  }
 
-function getName() {
-  return $_SESSION[':cas']['name'];
-}
+  function getName() {
+    return $_SESSION[':cas']['name'];
+  }
 
-function getProfile() {
-  return array(
-    'email' => $this->getEmail(),
-    'name' => $this->getName()
-    );
-}
+  function getProfile() {
+    return array(
+      'email' => $this->getEmail(),
+      'name' => $this->getName());
+  }
 }
 
 class CasStaffAuthBackend extends ExternalStaffAuthenticationBackend {
