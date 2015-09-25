@@ -8,14 +8,20 @@ class CasAuth {
     $this->config = $config;
   }
 
-  function triggerAuth($service_url = null) {
-    $self = $this;
+  private static function buildClient($hostname, $port, $context) {
     phpCAS::client(
       CAS_VERSION_2_0,
-      $this->config->get('cas-hostname'),
-      intval($this->config->get('cas-port')),
-      $this->config->get('cas-context'),
+      $hostname,
+      intval($port),
+      $context,
       false);
+  }
+
+  public function triggerAuth($service_url = null) {
+    self::buildClient(
+      $this->config->get('cas-hostname'),
+      $this->config->get('cas-port'),
+      $this->config->get('cas-context'));
 
     // Force set the CAS service URL to the osTicket login page.
     if ($service_url) {
@@ -39,15 +45,32 @@ class CasAuth {
     }
   }
 
-  function setUser() {
+  public static function signOut($config, $return_url = null) {
+    self::buildClient(
+      $config->get('cas-hostname'),
+      $config->get('cas-port'),
+      $config->get('cas-context'));
+
+    unset($_SESSION[':cas']);
+
+    if ($config->get('cas-single-sign-off')) {
+      if (empty($return_url)) {
+        phpCAS::logout();
+      } else {
+        phpCAS::logoutWithRedirectService($return_url);
+      }
+    }
+  }
+
+  public function setUser() {
     $_SESSION[':cas']['user'] = phpCAS::getUser();
   }
 
-  function getUser() {
+  public function getUser() {
     return $_SESSION[':cas']['user'];
   }
 
-  function setEmail() {
+  private function setEmail() {
     if($this->config->get('cas-email-attribute-key') !== null && phpCAS::hasAttribute($this->config->get('cas-email-attribute-key'))) {
       $_SESSION[':cas']['email'] = phpCAS::getAttribute(
         $this->config->get('cas-email-attribute-key'));
@@ -60,11 +83,11 @@ class CasAuth {
     }
   }
 
-  function getEmail() {
+  public function getEmail() {
     return $_SESSION[':cas']['email'];
   }
 
-  function setName() {
+  private function setName() {
     if($this->config->get('cas-name-attribute-key') !== null && phpCAS::hasAttribute($this->config->get('cas-name-attribute-key'))) {
       $_SESSION[':cas']['name'] = phpCAS::getAttribute(
         $this->config->get('cas-name-attribute-key'));
@@ -73,11 +96,11 @@ class CasAuth {
     }
   }
 
-  function getName() {
+  public function getName() {
     return $_SESSION[':cas']['name'];
   }
 
-  function getProfile() {
+  public function getProfile() {
     return array(
       'email' => $this->getEmail(),
       'name' => $this->getName());
@@ -90,22 +113,25 @@ class CasStaffAuthBackend extends ExternalStaffAuthenticationBackend {
 
   static $service_name = "CAS";
 
-  var $config;
+  private static $config;
 
-  function __construct($config) {
-    $this->config = $config;
-    $this->cas = new CasAuth($config);
+  function __construct() {
+    $this->cas = new CasAuth(self::$config);
+  }
+
+  public static function bootstrap($config) {
+    self::$config = $config;
   }
 
   function getName() {
-    $config = $this->config;
+    $config = self::$config;
     list($__, $_N) = $config::translate();
     return $__(static::$name);
   }
 
   function signOn() {
     if (isset($_SESSION[':cas']['user'])) {
-      if (($staff = StaffSession::lookup($_SESSION[':cas']['email']))
+      if (($staff = StaffSession::lookup($this->cas->getEmail()))
         && $staff->getId()) {
         if (!$staff instanceof StaffSession) {
           // osTicket <= v1.9.7 or so
@@ -119,8 +145,15 @@ class CasStaffAuthBackend extends ExternalStaffAuthenticationBackend {
   }
 
   static function signOut($user) {
+    global $cfg;
+
     parent::signOut($user);
-    unset($_SESSION[':cas']);
+
+    $return_url = null;
+    if ($cfg != null && !empty($cfg->getUrl())) {
+      $return_url = $cfg->getUrl() . "scp/";
+    }
+    CasAuth::signOut(self::$config, $return_url);
   }
 
   function getServiceUrl() {
@@ -145,13 +178,18 @@ class CasClientAuthBackend extends ExternalUserAuthenticationBackend {
 
   static $service_name = "CAS";
 
-  function __construct($config) {
-    $this->config = $config;
-    $this->cas = new CasAuth($config);
+  private static $config;
+
+  function __construct() {
+    $this->cas = new CasAuth(self::$config);
+  }
+
+  public static function bootstrap($config) {
+    self::$config = $config;
   }
 
   function getName() {
-    $config = $this->config;
+    $config = self::$config;
     list($__, $_N) = $config::translate();
     return $__(static::$name);
   }
@@ -161,25 +199,31 @@ class CasClientAuthBackend extends ExternalUserAuthenticationBackend {
   }
 
   function signOn() {
-    if (isset($_SESSION[':cas']['user'])) {
+    if (isset($_SESSION[':cas'])) {
       $acct = ClientAccount::lookupByUsername($this->cas->getEmail());
       $client = null;
       if ($acct && $acct->getId()) {
         $client = new ClientSession(new EndUser($acct->getUser()));
       }
 
-      if ($client) {
-        return $client;
-      } else {
-        return new ClientCreateRequest(
+      if (!$client) {
+        $client = new ClientCreateRequest(
           $this, $this->cas->getEmail(), $this->cas->getProfile());
       }
+      return $client;
     }
   }
 
   static function signOut($user) {
+    global $cfg;
+
     parent::signOut($user);
-    unset($_SESSION[':cas']);
+
+    $return_url = null;
+    if ($cfg != null && !empty($cfg->getUrl())) {
+      $return_url = $cfg->getUrl() . "login.php";
+    }
+    CasAuth::signOut(self::$config, $return_url);
   }
 
   function getServiceUrl() {

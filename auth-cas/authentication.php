@@ -14,13 +14,13 @@ class CasAuthPlugin extends Plugin
     $enabled = $config->get('cas-enabled');
     if (in_array($enabled, array('all', 'staff'))) {
       require_once 'cas.php';
-      StaffAuthenticationBackend::register(
-        new CasStaffAuthBackend($this->getConfig()));
+      CasStaffAuthBackend::bootstrap($this->getConfig());
+      StaffAuthenticationBackend::register(new CasStaffAuthBackend());
     }
     if (in_array($enabled, array('all', 'client'))) {
       require_once 'cas.php';
-      UserAuthenticationBackend::register(
-        new CasClientAuthBackend($this->getConfig()));
+      CasClientAuthBackend::bootstrap($this->getConfig());
+      UserAuthenticationBackend::register(new CasClientAuthBackend());
     }
   }
 }
