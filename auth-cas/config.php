@@ -53,6 +53,8 @@ class CasPluginConfig extends PluginConfig {
       'cas-email-attribute-key' => new TextboxField(array(
         'label' => $__('E-mail attribute key'),
         'configuration' => array('size'=>60, 'length'=>100))),
+      'cas-single-sign-off' => new BooleanField(array(
+        'label' => $__('Use single sign off'))),
       'cas-enabled' => clone $modes);
   }
 }
