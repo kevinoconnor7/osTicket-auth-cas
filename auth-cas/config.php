@@ -25,45 +25,34 @@ class CasPluginConfig extends PluginConfig {
         'disabled' => $__('Disabled'),
         'staff' => $__('Agents Only'),
         'client' => $__('Clients Only'),
-        'all' => $__('Agents and Clients'),
-        ),
-      ));
+        'all' => $__('Agents and Clients'))));
     return array(
       'cas' => new SectionBreakField(array(
-        'label' => $__('CAS Authentication'),
-        )),
+        'label' => $__('CAS Authentication'))),
       'cas-hostname' => new TextboxField(array(
         'label' => $__('Server Hostname'),
-        'configuration' => array('size'=>60, 'length'=>100),
-        )),
+        'configuration' => array('size'=>60, 'length'=>100))),
       'cas-port' => new TextboxField(array(
         'label' => $__('Server Port'),
-        'configuration' => array('size'=>10, 'length'=>8),
-        )),
+        'configuration' => array('size'=>10, 'length'=>8))),
       'cas-context' => new TextboxField(array(
         'label' => $__('Server Context'),
         'configuration' => array('size'=>60, 'length'=>100),
-        'hint' => $__('This value is "/cas" for most installs.'),
-        )),
+        'hint' => $__('This value is "/cas" for most installs.'))),
       'cas-ca-cert-path' => new TextboxField(array(
         'label' => $__('CA Cert Path'),
-        'configuration' => array('size'=>60, 'length'=>100),
-        )),
+        'configuration' => array('size'=>60, 'length'=>100))),
       'cas-at-domain' => new TextboxField(array(
         'label' => $__('E-mail suffix'),
         'configuration' => array('size'=>60, 'length'=>100),
         'hint' => $__('Use this field if your CAS server does not
-          report an e-mail attribute. ex: "@domain.tld"'),
-        )),
+          report an e-mail attribute. ex: "@domain.tld"'))),
       'cas-name-attribute-key' => new TextboxField(array(
         'label' => $__('Name attribute key'),
-        'configuration' => array('size'=>60, 'length'=>100),
-        )),
+        'configuration' => array('size'=>60, 'length'=>100))),
       'cas-email-attribute-key' => new TextboxField(array(
         'label' => $__('E-mail attribute key'),
-        'configuration' => array('size'=>60, 'length'=>100),
-        )),
-      'cas-enabled' => clone $modes,
-      );
-}
+        'configuration' => array('size'=>60, 'length'=>100))),
+      'cas-enabled' => clone $modes);
+  }
 }
