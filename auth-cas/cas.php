@@ -199,6 +199,8 @@ class CasClientAuthBackend extends ExternalUserAuthenticationBackend {
   }
 
   function signOn() {
+    global $cfg;
+
     if (isset($_SESSION[':cas'])) {
       $acct = ClientAccount::lookupByUsername($this->cas->getEmail());
       $client = null;
@@ -209,6 +211,9 @@ class CasClientAuthBackend extends ExternalUserAuthenticationBackend {
       if (!$client) {
         $client = new ClientCreateRequest(
           $this, $this->cas->getEmail(), $this->cas->getProfile());
+        if (!$cfg || !$cfg->isClientRegistrationEnabled() && self::$config->get('cas-force-register')) {
+          $client = $client->attemptAutoRegister();
+        }
       }
       return $client;
     }

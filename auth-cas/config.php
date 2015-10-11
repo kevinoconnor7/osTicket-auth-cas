@@ -55,6 +55,9 @@ class CasPluginConfig extends PluginConfig {
         'configuration' => array('size'=>60, 'length'=>100))),
       'cas-single-sign-off' => new BooleanField(array(
         'label' => $__('Use single sign off'))),
+      'cas-force-register' => new BooleanField(array(
+        'label' => $__('Force client registration'),
+        'hint' => $__('This is useful if you have public registration disabled.'))),
       'cas-enabled' => clone $modes);
   }
 }
