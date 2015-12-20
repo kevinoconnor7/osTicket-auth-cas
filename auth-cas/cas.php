@@ -117,6 +117,10 @@ class CasStaffAuthBackend extends ExternalStaffAuthenticationBackend {
 
   function __construct() {
     $this->cas = new CasAuth(self::$config);
+    $customLabel = self::$config->get('cas-service-label');
+    if (!empty($customLabel)) {
+      self::$service_name = $customLabel;
+    }
   }
 
   public static function bootstrap($config) {
@@ -182,6 +186,11 @@ class CasClientAuthBackend extends ExternalUserAuthenticationBackend {
 
   function __construct() {
     $this->cas = new CasAuth(self::$config);
+
+    $customLabel = self::$config->get('cas-service-label');
+    if (!empty($customLabel)) {
+      self::$service_name = $customLabel;
+    }
   }
 
   public static function bootstrap($config) {

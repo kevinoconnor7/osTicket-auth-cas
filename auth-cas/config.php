@@ -47,6 +47,11 @@ class CasPluginConfig extends PluginConfig {
         'configuration' => array('size'=>60, 'length'=>100),
         'hint' => $__('Use this field if your CAS server does not
           report an e-mail attribute. ex: "@domain.tld"'))),
+      'cas-service-label' => new TextboxField(array(
+        'label' => $__('Service label'),
+        'configuration' => array('size'=>60, 'length'=>100),
+        'hint' => $__('The text "Login with {label}" will appear on the login
+            button. By default this is "CAS".'))),
       'cas-name-attribute-key' => new TextboxField(array(
         'label' => $__('Name attribute key'),
         'configuration' => array('size'=>60, 'length'=>100))),
