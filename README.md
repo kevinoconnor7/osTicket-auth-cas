@@ -23,7 +23,7 @@ and put it in your `includes/plugins` folder. From the admin panel go to
 ### From source
 
 Follow the instructions to install [core-plugins](https://github.com/osTicket/core-plugins)
-and then clone this repo into your `includes/plugns` folder. Then run
+and then clone this repo into your `include/plugns` folder. Then run
 `php make.php hydrate` again.
 
 Building
