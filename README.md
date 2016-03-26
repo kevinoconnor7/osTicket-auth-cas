@@ -30,8 +30,7 @@ Building
 ========
 
 Make sure you have `make.php` from [core-plugins](https://github.com/osTicket/core-plugins)
-and run `php make.php build auth-cas` to generate a phar package. This requires
-that you have `phar.readonly = Off` in your php.ini file.
+and run `php -dphar.readonly=0 make.php build auth-cas` to generate a phar package.
 
 Testing
 =======
