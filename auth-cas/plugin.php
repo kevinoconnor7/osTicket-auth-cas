@@ -1,7 +1,7 @@
 <?php
 return array(
   'id' =>             'auth:cas', # notrans
-  'version' =>        '1.1.3',
+  'version' =>        '1.1.4',
   'name' =>           /* trans */ 'JASIG CAS Authentication',
   'author' =>         'Kevin O\'Connor',
   'description' =>    /* trans */ 'Provides a configurable authentication
