@@ -10,6 +10,7 @@ deploy:
   api_key:
     secure: fWQ8DTc0w697x34ZYv3aC8xXaU3prIEl4HdbUA4w/BNb1s+kHcV9rmS1eTjaVhLW+m9i60Ks4YnHr/njN48V6V+ti1sCjVl/qHXP9+CAX9yv/3pBWhpld54nGIxyYcYHQ/PYn1wr79TdfIc5g7/9RT89VCS85+b7lHIZTVquQDVS2BYVfCzaIKkfHHvQjR0Du2vC/ETaPqZN02rKkkiVSYLkvCMU0/aOdEDrf+QjRiokSi3U0jAIAF2y6LWNLVhHPyFJaEqIIn1WHm63N94qZos3Bw/oTP2l0ZsmYYhRiUHMhWL2WbtMLp2EQIrKVveVFfywgQn77A4e/xfwT0Vi/WXmzyRqyzr4NZ3UuWRt3wrp919LLbhyJklrNlLDVaHekBC3DDIOxT8Randg9q20ZNIutHTy9isybjF/qExYUBYvGFntARiMeNU0JHgbEKHPXRVhwcWhf84KaJkx2LoRU0u0HxGQntjETFMscmY93mcEUWgSjwQmDXLSeN9joDkMSQj6Dn3s/zjveNNPmX/w6l6lRvGuiDPnXsbSBvMA71NpIHFpXpw89RBs7fbmMFqsAl7OufoFrKKiyaunxLCXFefeKvPkZM5n7A78/tERf265To9NkXkMukI8A8yQZ+GntWaDVF+vhZq7NfPrLcFIf4mfVwrInMRJUkcWmc7qC4Q=
   file: auth-cas.phar
+  skip_cleanup: true
   on:
     repo: kevinoconnor7/osTicket-auth-cas
     tags: true
