@@ -154,7 +154,7 @@ class CasStaffAuthBackend extends ExternalStaffAuthenticationBackend {
     parent::signOut($user);
 
     $return_url = null;
-    if ($cfg != null && !trim($cfg->getUrl())) {
+    if ($cfg != null && !empty(trim($cfg->getUrl()))) {
       $return_url = $cfg->getUrl() . "scp/login.php";
     }
     CasAuth::signOut(self::$config, $return_url);
@@ -234,7 +234,7 @@ class CasClientAuthBackend extends ExternalUserAuthenticationBackend {
     parent::signOut($user);
 
     $return_url = null;
-    if ($cfg != null && !trim($cfg->getUrl())) {
+    if ($cfg != null && !empty(trim($cfg->getUrl()))) {
       $return_url = $cfg->getUrl() . "login.php";
     }
     CasAuth::signOut(self::$config, $return_url);
