@@ -10,7 +10,7 @@ return array(
   'plugin' =>         'authentication.php:CasAuthPlugin',
   'requires' => array(
     "jasig/phpcas" => array(
-      "version" => "1.3.3",
+      "version" => "1.3.5",
       "map" => array(
         "jasig/phpcas/source" => 'lib/jasig/phpcas',
         )
