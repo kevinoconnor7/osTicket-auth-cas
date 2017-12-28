@@ -4,6 +4,7 @@
 Vagrantfile
 
 # Staging directory used for packaging script
+build
 stage
 
 # Ignore compiled phar files
