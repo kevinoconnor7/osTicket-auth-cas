@@ -13,7 +13,8 @@ dependencies: $(BUILDDIR)/osTicket-plugins
 $(BUILDDIR)/osTicket-plugins: builddir
 	@if [ ! -d $@ ]; then \
 		echo "osTicket-plugins dep missing, fetching..."; \
-		git clone https://github.com/osTicket/osTicket-plugins.git $@; \
+		git clone --depth=1 \
+			https://github.com/osTicket/osTicket-plugins.git $@; \
 	fi
 
 $(BUILDDIR)/$(PHAR): dependencies
