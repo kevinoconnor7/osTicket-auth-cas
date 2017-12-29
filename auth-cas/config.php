@@ -39,6 +39,10 @@ class CasPluginConfig extends PluginConfig {
         'label' => $__('Server Context'),
         'configuration' => array('size'=>60, 'length'=>100),
         'hint' => $__('This value is "/cas" for most installs.'))),
+      'cas-vsn' => new TextboxField(array(
+        'label' => $__('CAS Protocol'),
+        'configuration' => array('size'=>60, 'length'=>100),
+        'hint' => $__('Use 2.0 or 3.0 in most cases'))),
       'cas-ca-cert-path' => new TextboxField(array(
         'label' => $__('CA Cert Path'),
         'configuration' => array('size'=>60, 'length'=>100))),
