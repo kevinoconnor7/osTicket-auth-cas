@@ -4,11 +4,10 @@ php:
   - 5.5
   - 5.6
   - 7.0
-before_script: wget https://raw.githubusercontent.com/osTicket/core-plugins/develop/make.php
 env:
   - CROWDIN_PROJECT="osTicket-auth-cas"
   - secure: qjdQmFzIdCSOGZd7BX0j/c5rOUjD6M9v8++Iz84adZnCgwk1FT9FA7d+H9h4IdJUdUjvhNRo8ne1PjMgIlD9169/KFEKl1yX/2WDQadlIawNHHFN7zpU3y19D4oReNExhhANuZ/NouPl6j5Ug4RHH0y6zsxltRT5I78Q/scAYXXb4ReZoQMQutAdKfc572s/BPLobgPcbbamX7suSak5o4+MXxSnLtfrOTqm7fkztad/MhvIdijiax311hOY00T7S4fVQfoNbk7z6gaqs2d7gqN5WRVu7Vjgm2H2/oj1KJjFx033r0WvW3NNCFCuZyc2UWyeypQBLvXjGMwVTrBV92hhFvQlkVpSiAxVGNdlkSJlwIbbNtGyoqinGv4nsKNwqnKQY24RBcJ+bY3dGZC91KlXTX060UQO1mvvsVpbEyXSEvPfaM1OzNqfuScpmMzAv3UzE0hk8AoVCCkDuxy9CsHqwBEBtnTa5CxsiPQw1XqqpXyNhonr3BhHa19Ulk7IBn+TBbehVdtgIiPToRJolvPxyQ5Ii6XafqXbgyzXJnSqBmZYNgzAC1OfB6EXrKh3cjkygiE2KVndUYsKMwIKbdApImgGLWhcrDDAPjZDkS/gPpvbmYBtmJbpC5RMr7pPEXcE8l+uIwo9sDwiyphlaP8G1yHvxVQuL+xszO+Snww=
-script: php make.php build auth-cas
+script: make
 deploy:
   provider: releases
   api_key:
