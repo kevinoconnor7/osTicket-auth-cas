@@ -9,12 +9,12 @@ class CasAuth {
     $this->config = $config;
   }
 
-  private static function buildClient($hostname, $port, $context,$casvsn) {
+  private static function buildClient($hostname, $port, $context, $version) {
     if (CAS_DEBUG_MODE) {
       phpCAS::setDebug('/tmp/phpCas.log');
     }
     phpCAS::client(
-      $casvsn,
+      $version,
       $hostname,
       intval($port),
       $context,
@@ -25,21 +25,17 @@ class CasAuth {
     }
   }
 
-  public function triggerAuth($service_url = null) {
-
-    $casvsn = CAS_VERSION_2_0;
-    if($this->config->get('cas-vsn') !== null){
-       $casvsn = $this->config->get('cas-vsn');
-     }
-
-     self::buildClient(
-      $this->config->get('cas-hostname'),
-      $this->config->get('cas-port'),
-      $this->config->get('cas-context'),
-      $casvsn
+  private static function buildClientFromConfig($config) {
+    self::buildClient(
+      $config->get('cas-hostname'),
+      $config->get('cas-port'),
+      $config->get('cas-context'),
+      $config->get('cas-version')
     );
+  }
 
-
+  public function triggerAuth($service_url = null) {
+    self::buildClientFromConfig($this->config);
 
     // Force set the CAS service URL to the osTicket login page.
     if ($service_url) {
@@ -64,17 +60,7 @@ class CasAuth {
   }
 
   public static function signOut($config, $return_url = null) {
-    $casvsn = CAS_VERSION_2_0;
-    if($config->get('cas-vsn') !== null){
-       $casvsn = $config->get('cas-vsn');
-     }
-
-     self::buildClient(
-      $config->get('cas-hostname'),
-      $config->get('cas-port'),
-      $config->get('cas-context'),
-      $casvsn
-    );
+    self::buildClientFromConfig($config);
     unset($_SESSION[':cas']);
 
     if ($config->get('cas-single-sign-off')) {

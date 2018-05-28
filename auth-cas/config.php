@@ -1,6 +1,8 @@
 <?php
-
 require_once INCLUDE_DIR . 'class.plugin.php';
+
+// Include CAS to ensure that we pull in the constants.
+require_once(dirname(__file__).'/lib/jasig/phpcas/CAS.php');
 
 class CasPluginConfig extends PluginConfig {
 
@@ -20,7 +22,7 @@ class CasPluginConfig extends PluginConfig {
     list($__, $_N) = self::translate();
     $modes = new ChoiceField(array(
       'label' => $__('Authentication'),
-      'default' => "disabled",
+      'default' => 'disabled',
       'choices' => array(
         'disabled' => $__('Disabled'),
         'staff' => $__('Agents Only'),
@@ -39,10 +41,14 @@ class CasPluginConfig extends PluginConfig {
         'label' => $__('Server Context'),
         'configuration' => array('size'=>60, 'length'=>100),
         'hint' => $__('This value is "/cas" for most installs.'))),
-      'cas-vsn' => new TextboxField(array(
+      'cas-version' => new ChoiceField(array(
         'label' => $__('CAS Protocol'),
-        'configuration' => array('size'=>60, 'length'=>100),
-        'hint' => $__('Use 2.0 or 3.0 in most cases'))),
+        'default' => CAS_VERSION_2_0,
+        'choices' => array(
+          CAS_VERSION_2_0 => CAS_VERSION_2_0,
+          CAS_VERSION_3_0 => CAS_VERSION_3_0,
+        )
+      )),
       'cas-ca-cert-path' => new TextboxField(array(
         'label' => $__('CA Cert Path'),
         'configuration' => array('size'=>60, 'length'=>100))),
