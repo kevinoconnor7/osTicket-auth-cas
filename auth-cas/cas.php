@@ -1,5 +1,6 @@
 <?php
 require_once(dirname(__file__).'/lib/jasig/phpcas/CAS.php');
+define('CAS_DEBUG_MODE', false);
 
 class CasAuth {
   private $config;
@@ -9,12 +10,19 @@ class CasAuth {
   }
 
   private static function buildClient($hostname, $port, $context) {
+    if (CAS_DEBUG_MODE) {
+      phpCAS::setDebug('/tmp/phpCas.log');
+    }
     phpCAS::client(
       CAS_VERSION_2_0,
       $hostname,
       intval($port),
       $context,
       false);
+    if (CAS_DEBUG_MODE) {
+      phpCAS::setExtraCurlOption(CURLOPT_SSL_VERIFYHOST, 0);
+      phpCAS::setExtraCurlOption(CURLOPT_SSL_VERIFYPEER, false);
+    }
   }
 
   public function triggerAuth($service_url = null) {
