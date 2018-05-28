@@ -1,0 +1,27 @@
+version: '3'
+services:
+  osticket:
+    image: campbellsoftwaresolutions/osticket
+    links:
+      - mysql:mysql
+      - cas:cas
+    ports:
+      - 8080:80
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=osticket
+      - MYSQL_PASSWORD=hunter5
+      - MYSQL_DATABASE=osticket
+      - ADMIN_USERNAME=demo
+      - ADMIN_PASSWORD=hunter5
+  mysql:
+    image: mysql
+    environment:
+      - MYSQL_USER=osticket
+      - MYSQL_PASSWORD=hunter5
+      - MYSQL_DATABASE=osticket
+      - MYSQL_ROOT_PASSWORD=hunter5
+  cas:
+    image: registry.gitlab.com/kevin.oconnor7/docker-cas-quickdemo
+    ports:
+      - 8443:8443
