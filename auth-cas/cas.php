@@ -94,7 +94,23 @@ class CasAuth {
   }
 
   public function getEmail() {
-    return $_SESSION[':cas']['email'];
+    $email = $_SESSION[':cas']['email'];
+    if (is_array($email)) {
+      $email = $email[0];
+    }
+    return $email;
+  }
+
+  public function getEmailQuery() {
+    $emails = $_SESSION[':cas']['email'];
+
+    if (!is_array($emails)) {
+      $emails = array($emails);
+    }
+
+    return array(
+      'email__in' => $emails,
+    );
   }
 
   private function setName() {
@@ -145,7 +161,7 @@ class CasStaffAuthBackend extends ExternalStaffAuthenticationBackend {
 
   function signOn() {
     if (isset($_SESSION[':cas']['user'])) {
-      if (($staff = StaffSession::lookup($this->cas->getEmail()))
+      if (($staff = StaffSession::lookup($this->cas->getEmailQuery()))
         && $staff->getId()) {
         if (!$staff instanceof StaffSession) {
           // osTicket <= v1.9.7 or so
@@ -221,7 +237,7 @@ class CasClientAuthBackend extends ExternalUserAuthenticationBackend {
     global $cfg;
 
     if (isset($_SESSION[':cas'])) {
-      $acct = ClientAccount::lookupByUsername($this->cas->getEmail());
+      $acct = ClientAccount::lookupByUsername($this->cas->getEmailQuery());
       $client = null;
       if ($acct && $acct->getId()) {
         $client = new ClientSession(new EndUser($acct->getUser()));
