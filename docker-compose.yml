@@ -15,7 +15,7 @@ services:
       - ADMIN_USERNAME=demo
       - ADMIN_PASSWORD=hunter5
   mysql:
-    image: mysql
+    image: mysql:5.7
     environment:
       - MYSQL_USER=osticket
       - MYSQL_PASSWORD=hunter5
