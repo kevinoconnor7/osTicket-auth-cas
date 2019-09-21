@@ -87,6 +87,9 @@ class CasAuth {
     } else {
       $email = $this->getUser();
       if($this->config->get('cas-at-domain') !== null) {
+        if (substr($this->config->get('cas-at-domain'), 0, 1) !== "@") {
+          $email .= '@';
+        }
         $email .= $this->config->get('cas-at-domain');
       }
       $_SESSION[':cas']['email'] = $email;
