@@ -8,14 +8,16 @@ jobs:
       CROWDIN_API_KEY: $CROWDIN_API_KEY
     steps:
       - checkout
+      - attach_workspace:
+            at: /tmp/workspace
 
       - run: sudo apt update
       - run: make
 
       - persist_to_workspace:
-          root: /tmp/workspace
+          root: .
           paths:
-            - build/*
+            - build
 
       - store_artifacts:
           path: build/auth-cas.phar
