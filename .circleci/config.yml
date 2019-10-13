@@ -1,3 +1,10 @@
+only-deploy-tags: &only-version-tags
+  filters:
+    tags:
+      only: /^v.*/
+    branches:
+      ignore: /.*/
+
 version: 2
 jobs:
   build:
@@ -40,15 +47,14 @@ jobs:
 
 workflows:
   version: 2
-  main:
+  untagged-build:
     jobs:
       - build
+  release-build:
+    jobs:
+      - build: *only-version-tags
       - publish-github-release:
+          <<: *only-version-tags
           requires:
             - build
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v.*/
 
