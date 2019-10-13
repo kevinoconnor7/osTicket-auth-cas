@@ -12,5 +12,41 @@ jobs:
       - run: sudo apt update
       - run: make
 
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - build/*
+
       - store_artifacts:
           path: build/auth-cas.phar
+  publish-github-release:
+    docker:
+      - image: cibuilds/github:0.13
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: "Publish Release on GitHub"
+          command: |
+            ghr \
+              -t ${GITHUB_TOKEN} \
+              -u ${CIRCLE_PROJECT_USERNAME} \
+              -r ${CIRCLE_PROJECT_REPONAME} \
+              -c ${CIRCLE_SHA1} \
+              -delete \
+              ${CIRCLE_TAG} /tmp/workspace/build/auth-cas.phar
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - build
+      - publish-github-release:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+
