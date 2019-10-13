@@ -3,6 +3,9 @@ jobs:
   build:
     docker:
       - image: circleci/php:7.1
+    environment:
+      CROWDIN_PROJECT: $CROWDIN_PROJECT
+      CROWDIN_API_KEY: $CROWDIN_API_KEY
     steps:
       - checkout
 
