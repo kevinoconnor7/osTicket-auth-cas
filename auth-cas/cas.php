@@ -122,7 +122,7 @@ class CasAuth {
       // parse rows by splitting newlines, then map to columns
       $attrs = array_map('str_getcsv', str_getcsv($this->config->get('cas-custom-attributes'), "\n"));
       // iterate over rows of ["claim-attribute", "form-field"]
-      foreach ($attrs as $x) {
+      foreach ($attrs as &$x) {
         // XXX: silently ignore incorrect column size and missing attrs
         // XXX: does not disallow reserved fields user, email, name
         if(count($x) == 2 && phpCAS::hasAttribute(trim($x[0]))) {
