@@ -1,7 +1,7 @@
 <?php
 return array(
   'id' =>             'auth:cas', # notrans
-  'version' =>        '1.1.7',
+  'version' =>        '1.1.8-rc1',
   'name' =>           /* trans */ 'JASIG CAS Authentication',
   'author' =>         'Kevin O\'Connor',
   'description' =>    /* trans */ 'Provides a configurable authentication
@@ -10,7 +10,7 @@ return array(
   'plugin' =>         'authentication.php:CasAuthPlugin',
   'requires' => array(
     "jasig/phpcas" => array(
-      "version" => "1.3.5",
+      "version" => "1.3.8",
       "map" => array(
         "jasig/phpcas/source" => 'lib/jasig/phpcas',
         )
