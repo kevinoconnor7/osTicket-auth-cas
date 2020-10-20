@@ -118,7 +118,7 @@ class CasAuth {
 
   private function setCustomFields() {
     $custom = array();
-    if($this->config->get('cas-custom-attributes') !== null) {
+    if(!empty($this->config->get('cas-custom-attributes'))) {
       // parse rows by splitting newlines, then map to columns
       $attrs = array_map('str_getcsv', str_getcsv($this->config->get('cas-custom-attributes'), "\n"));
       // iterate over rows of ["claim-attribute", "form-field"]

@@ -104,19 +104,24 @@ class CasPluginConfig extends PluginConfig {
     list($__, $_N) = self::translate();
 
     // test CSV
-    $attrs = array_map('str_getcsv', str_getcsv($config['cas-custom-attributes'], "\n"));
-    $username_field_choices = array('email', 'name');
-    // iterate over rows of ["claim-attribute", "form-field"]
-    for ($i = 0; $i < count($attrs); $i++) {
-      $x = &$attrs[$i];
-      if(count($x) != 2) {
-        $err = $__('Each line should be in form "claim-attribute,form-field"');
-      } elseif(in_array(trim($x[1]), $username_field_choices)) {
-        $err = sprintf($__('Do not map to form field "%s", set it in the options above'), trim($x[1]));
-      } else continue;
-      $this->getForm()->getField('cas-custom-attributes')->addError(sprintf($__('Line %d: '), $i + 1) . $err);
-      $errors['err'] = $__('Syntax error found in in custom attributes');
-      break;
+    $attrs = $config['cas-custom-attributes'];
+    if(empty(trim($attrs))) {
+      $config['cas-custom-attributes'] = '';
+    } else {
+      $attrs = array_map('str_getcsv', str_getcsv($config['cas-custom-attributes'], "\n"));
+      $username_field_choices = array('email', 'name');
+      // iterate over rows of ["claim-attribute", "form-field"]
+      for ($i = 0; $i < count($attrs); $i++) {
+        $x = &$attrs[$i];
+        if(count($x) != 2) {
+          $err = $__('Each line should be in form "claim-attribute,form-field"');
+        } elseif(in_array(trim($x[1]), $username_field_choices)) {
+          $err = sprintf($__('Do not map to form field "%s", set it in the options above'), trim($x[1]));
+        } else continue;
+        $this->getForm()->getField('cas-custom-attributes')->addError(sprintf($__('Line %d: '), $i + 1) . $err);
+        $errors['err'] = $__('Syntax error found in in custom attributes');
+        break;
+      }
     }
 
     global $msg;
