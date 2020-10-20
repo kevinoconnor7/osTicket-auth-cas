@@ -123,9 +123,8 @@ class CasAuth {
       $attrs = array_map('str_getcsv', str_getcsv($this->config->get('cas-custom-attributes'), "\n"));
       // iterate over rows of ["claim-attribute", "form-field"]
       foreach ($attrs as &$x) {
-        // XXX: silently ignore incorrect column size and missing attrs
-        // XXX: does not disallow reserved fields user, email, name
-        if(count($x) == 2 && phpCAS::hasAttribute(trim($x[0]))) {
+        // NOTE: fields are validated in config.php, only need to check if CAS has attr
+        if(phpCAS::hasAttribute(trim($x[0]))) {
           $custom[trim($x[1])] = phpCAS::getAttribute(trim($x[0]));
         }
       }
@@ -138,11 +137,10 @@ class CasAuth {
   }
 
   public function getProfile() {
-    return array_merge(
-      array(
+    return array_merge($this->getCustomFields(), array(
         'email' => $this->getEmail(),
         'name' => $this->getName()
-      ), $this->getCustomFields());
+      ));
   }
 
   public function getUsernameField() {
@@ -156,14 +154,22 @@ class CasAuth {
   // NOTE: Username in this context is osTicket username, not CAS user;
   //       see getUser() for CAS user
   public function getUsername() {
-    // NOTE: since this value is not cached, avoid calling too much
-    $info = $this->getProfile();
-    $info['user'] = $this->getUser();
     $key = $this->getUsernameField();
-    if(array_key_exists($key, $info)) {
-      return $info[$key];
+    switch ($key) {
+      case 'email':
+        return $this->getEmail();
+        break;
+      case 'username':
+        $info = $this->getCustomFields();
+        if(array_key_exists('username', $info)) {
+          return $info['username'];
+        }
+        return $this->getUser();
+        break;
+      default:
+        // should never happen
+        trigger_error("cas-username-form-field is malformed: expected value 'email' or 'username'", E_USER_ERROR);
     }
-    trigger_error("Username form field '$key' not found in user profile array", E_USER_ERROR);
   }
 }
 
