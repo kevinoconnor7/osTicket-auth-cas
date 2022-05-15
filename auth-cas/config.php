@@ -10,7 +10,7 @@ class CasPluginConfig extends PluginConfig {
 
   // Provide compatibility function for versions of osTicket prior to
   // translation support (v1.9.4)
-  function translate() {
+  static function translate() {
     if (!method_exists('Plugin', 'translate')) {
       return array(
         function($x) { return $x; },
