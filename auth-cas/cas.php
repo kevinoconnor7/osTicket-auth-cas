@@ -179,22 +179,22 @@ class CasStaffAuthBackend extends ExternalStaffAuthenticationBackend {
 
   static $service_name = "CAS";
 
-  private static $config;
+  private static $cas_config;
 
   function __construct() {
-    $this->cas = new CasAuth(self::$config);
-    $customLabel = self::$config->get('cas-service-label');
+    $this->cas = new CasAuth(self::$cas_config);
+    $customLabel = self::$cas_config->get('cas-service-label');
     if (!empty($customLabel)) {
       self::$service_name = $customLabel;
     }
   }
 
   public static function bootstrap($config) {
-    self::$config = $config;
+    self::$cas_config = $config;
   }
 
   function getName() {
-    $config = self::$config;
+    $config = self::$cas_config;
     list($__, $_N) = $config::translate();
     return $__(static::$name);
   }
@@ -223,7 +223,7 @@ class CasStaffAuthBackend extends ExternalStaffAuthenticationBackend {
     if ($cfg != null && !empty(trim($cfg->getUrl()))) {
       $return_url = $cfg->getUrl() . "scp/login.php";
     }
-    CasAuth::signOut(self::$config, $return_url);
+    CasAuth::signOut(self::$cas_config, $return_url);
   }
 
   function getServiceUrl() {
@@ -248,23 +248,23 @@ class CasClientAuthBackend extends ExternalUserAuthenticationBackend {
 
   static $service_name = "CAS";
 
-  private static $config;
+  private static $cas_config;
 
   function __construct() {
-    $this->cas = new CasAuth(self::$config);
+    $this->cas = new CasAuth(self::$cas_config);
 
-    $customLabel = self::$config->get('cas-service-label');
+    $customLabel = self::$cas_config->get('cas-service-label');
     if (!empty($customLabel)) {
       self::$service_name = $customLabel;
     }
   }
 
   public static function bootstrap($config) {
-    self::$config = $config;
+    self::$cas_config = $config;
   }
 
   function getName() {
-    $config = self::$config;
+    $config = self::$cas_config;
     list($__, $_N) = $config::translate();
     return $__(static::$name);
   }
@@ -287,7 +287,7 @@ class CasClientAuthBackend extends ExternalUserAuthenticationBackend {
       if (!$client) {
         $client = new ClientCreateRequest(
           $this, $username, $this->cas->getProfile());
-        if (!$cfg || !$cfg->isClientRegistrationEnabled() && self::$config->get('cas-force-register')) {
+        if (!$cfg || !$cfg->isClientRegistrationEnabled() && self::$cas_config->get('cas-force-register')) {
           $client = $client->attemptAutoRegister();
         }
       }
@@ -304,7 +304,7 @@ class CasClientAuthBackend extends ExternalUserAuthenticationBackend {
     if ($cfg != null && !empty(trim($cfg->getUrl()))) {
       $return_url = $cfg->getUrl() . "login.php";
     }
-    CasAuth::signOut(self::$config, $return_url);
+    CasAuth::signOut(self::$cas_config, $return_url);
   }
 
   function getServiceUrl() {
