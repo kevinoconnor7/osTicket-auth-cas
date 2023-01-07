@@ -10,9 +10,6 @@ jobs:
   build:
     docker:
       - image: cimg/php:8.1.12
-    environment:
-      CROWDIN_PROJECT: $CROWDIN_PROJECT
-      CROWDIN_API_KEY: $CROWDIN_API_KEY
     steps:
       - checkout
       - attach_workspace:
